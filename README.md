@@ -239,8 +239,8 @@
   "StartTime": 1478167200,//开始时间  时间戳 精确到秒
   "EndTime": 1478599200,//结束时间  时间戳 精确到秒
   "NotificationId": 97526,//通知组id
-  "Bandwidth": 2, //带宽大小 单位：M 最小2M
-  "TimeRange": 1, //有效时长 单位：小时
+  "Bandwidth": 2, //带宽包带宽大小 单位：M 最小2M
+  "TimeRange": 1, //带宽包有效时长 单位：小时
   "EIPID": "eip-f24m2a"//要绑定的EIPID
 }
 ```
