@@ -166,6 +166,19 @@
 
 `./autoscaling create-bootup-config-bandwidth-package 'PublicKey' 'PrivateKey' cn-bj2 sxy-btpcfgbwp-test 2 1`
 
+## 修改一个 带宽包 启动配置
+
+`./autoscaling modify-bootup-config-bandwidth-package $PublicKey $PrivateKey $Region $ID --name=$Name --bandwidth=$Bandwidth --time_range=$TimeRange`
+
+参数说明:
+
+* ID 带宽包 启动配置 ID
+* Name 带宽包 启动配置 Name
+* Bandwidth 带宽大小 单位：M 最小2M
+* TimeRange 有效时长 单位：小时
+
+`./autoscaling modify-bootup-config-bandwidth-package 'PublicKey' 'PrivateKey' cn-bj2 sxy-btpcfgbwp-test --bandwidth=4`
+
 
 ## 创建一个 timer policy
 
@@ -198,7 +211,7 @@
 
 ## 修改一个 循环定时任务
 
-`./autoscaling modify-timer $PublicKey $PrivateKey $Region $TaskId $Name $StartTime $EndTime $Period $PolicyId $NotificationId`
+`./autoscaling modify-timer $PublicKey $PrivateKey $Region $TaskId --name=$Name --start_time=$StartTime --end_time=$EndTime --period=$Period --policy_id=$PolicyId --notification_id=$NotificationId`
 
 参数说明:
 
@@ -210,7 +223,7 @@
 * PolicyId 对应的Policy ID 
 * NotificationId 通知组 ID
 
-`./autoscaling modify-timer 'PublicKey' 'PrivateKey' cn-bj2 sxy-timer-test 1478156400 1479020400 utimer-dumwyp 1 uap-3afyvs 97526`
+`./autoscaling modify-timer 'PublicKey' 'PrivateKey' cn-bj2 sxy-timer-test --period=2`
 
 ## 修改一个 循环定时任务状态 开关
 

@@ -185,6 +185,22 @@ def createBootupConfigBandwidthPackage(args):
     r = json.loads(r)
     print(json.dumps(r, indent=4))
 
+def modifyBootupConfigBandwidthPackage(args):
+    params = {
+            "Region": args.region,
+            "ConfigId": args.id,
+            "Action": 'ModifyASBootupConfigBandwidthPackage'
+            }
+    if args.name:
+        params["Name"] = args.name
+    if args.bandwidth:
+        params["Bandwidth"] = args.bandwidth
+    if args.time_range:
+        params["TimeRange"] = args.time_range
+    r = requestToAPI(args.publicKey, args.privateKey, params)
+    r = json.loads(r)
+    print(json.dumps(r, indent=4))
+
 def createTimer(args):
     params = {
             "Region": args.region,
@@ -204,16 +220,22 @@ def createTimer(args):
 def modifyTimer(args):
     params = {
             "Region": args.region,
-            "Name": args.name,
             "TaskId": args.id,
-            "Period": args.period,
-            "NotificationId": args.notification_id,
-            "StartTime": args.start_time,
-            "EndTime": args.end_time,
-            "TimerActionURL": 'uas_scanner',
-            "TimerActionPath": args.policy_id,
             "Action": 'ModifyASTimer'
             }
+    if args.name:
+        params["Name"] = args.name
+    if args.period:
+        params["Period"] = args.period
+    if args.notification_id:
+        params["NotificationId"] = args.notification_id
+    if args.start_time:
+        params["StartTime"] = args.start_time
+    if args.end_time:
+        params["EndTime"] = args.end_time
+    if args.policy_id:
+        params["TimerActionURL"] = 'uas_scanner'
+        params["TimerActionPath"] = args.policy_id
     r = requestToAPI(args.publicKey, args.privateKey, params)
     r = json.loads(r)
     print(json.dumps(r, indent=4))
@@ -430,6 +452,17 @@ def runCreateBootupConfigBandwidthPackage(subparsers):
     createParser.add_argument('time_range', help='time range of bandwidth package Hour')
     createParser.set_defaults(func=createBootupConfigBandwidthPackage)
 
+def runModifyBootupConfigBandwidthPackage(subparsers):
+    createParser = subparsers.add_parser('modify-bootup-config-bandwidth-package', help='create a bootup config for bandwidth package')
+    createParser.add_argument('publicKey', help='public key')
+    createParser.add_argument('privateKey', help='private key')
+    createParser.add_argument('region', help='Region of the policy')
+    createParser.add_argument('id', help='BandwidthPackage BootupConfig id')
+    createParser.add_argument('--name', help='Name of the bootup config')
+    createParser.add_argument('--bandwidth', help='bandwidth of bandwidth package M')
+    createParser.add_argument('--time_range', help='time range of bandwidth package Hour')
+    createParser.set_defaults(func=modifyBootupConfigBandwidthPackage)
+
 def runCreateTimer(subparsers):
     createParser = subparsers.add_parser('create-timer', help='create a timer')
     createParser.add_argument('publicKey', help='public key')
@@ -449,12 +482,12 @@ def runModifyTimer(subparsers):
     createParser.add_argument('privateKey', help='private key')
     createParser.add_argument('region', help='Region of the policy')
     createParser.add_argument('id', help='id for timer')
-    createParser.add_argument('name', help='Name of the timer')
-    createParser.add_argument('start_time', help='start time for timer')
-    createParser.add_argument('end_time', help='end time for timer')
-    createParser.add_argument('period', help='period for timer')
-    createParser.add_argument('policy_id', help='policy id for timer')
-    createParser.add_argument('notification_id', help='Notification id')
+    createParser.add_argument('--name', help='Name of the timer')
+    createParser.add_argument('--start_time', help='start time for timer')
+    createParser.add_argument('--end_time', help='end time for timer')
+    createParser.add_argument('--period', help='period for timer')
+    createParser.add_argument('--policy_id', help='policy id for timer')
+    createParser.add_argument('--notification_id', help='Notification id')
     createParser.set_defaults(func=modifyTimer)
 
 def runUpdateTimerStatus(subparsers):
@@ -489,6 +522,7 @@ def main():
     runRemoveInstanceFropGroup(subparsers)
     runCreateTimerPolicy(subparsers)
     runCreateBootupConfigBandwidthPackage(subparsers)
+    runModifyBootupConfigBandwidthPackage(subparsers)
     runModifyTimerPolicy(subparsers)
     runCreateTimer(subparsers)
     runModifyTimer(subparsers)
