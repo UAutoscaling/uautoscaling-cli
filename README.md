@@ -153,6 +153,18 @@
 
 `./autoscaling remove-instance 'PublicKey' 'PrivateKey' cn-bj2 uap-eg2dku uhost-ubc51v`
 
+## 更新实例锁定状态
+
+`./autoscaling update-instance-lock-state $PublicKey $PrivateKey $Region $GroupId $InstanceId $State`
+
+参数说明:
+
+* GroupId 对应的Instance Group ID
+* InstanceId 要删除的uhost ID
+* State 实例是否锁定 YES or NO
+
+`./autoscaling update-instance-lock-state 'PublicKey' 'PrivateKey' cn-bj2 uap-eg2dku uhost-ubc51v YES`
+
 
 ## 创建一个 带宽包 启动配置
 

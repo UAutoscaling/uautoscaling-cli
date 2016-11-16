@@ -144,6 +144,18 @@ def removeInstanceFromGroup(args):
     r = json.loads(r)
     print(json.dumps(r, indent=4))
 
+def updateInstanceLockState(args):
+    params = {
+            "InstanceId": args.instanceId,
+            "GroupId": args.groupId,
+            "State": args.state,
+            "Region": args.region,
+            "Action": 'UpdateInstanceLockState'
+            }
+    r = requestToAPI(args.publicKey, args.privateKey, params)
+    r = json.loads(r)
+    print(json.dumps(r, indent=4))
+
 def createTimerPolicy(args):
     params = {
             "Region": args.region,
@@ -368,7 +380,7 @@ def runModifyInstanceGroup(subparsers):
     createParser.add_argument('scale_min', help='Min of scale')
     createParser.add_argument('bootup_config', help='The id of bootup config')
     createParser.add_argument('remove_policy', help='first or last')
-    createParser.add_argument('--eip', help='is bind eip yes or no')
+    createParser.add_argument('--eip', help='is bind eip YES or NO')
     createParser.set_defaults(func=modifyInstanceGroup)
 
 def runCreateInstanceGroup(subparsers):
@@ -385,7 +397,7 @@ def runCreateInstanceGroup(subparsers):
     createParser.add_argument('desired_amount', help='The desired amount')
     createParser.add_argument('-u', '--ulb', help='uld id')
     createParser.add_argument('--vserver', nargs='+', help='config of vserver, e.g. vserver-quklv4:9000')
-    createParser.add_argument('--eip', help='is bind eip yes or no')
+    createParser.add_argument('--eip', help='is bind eip YES or NO')
     createParser.set_defaults(func=createInstanceGroup)
     
 def runGetInstanceGroup(subparsers):
@@ -420,6 +432,16 @@ def runRemoveInstanceFropGroup(subparsers):
     parser.add_argument('groupId', help='group id')
     parser.add_argument('instanceId', help='instance id')
     parser.set_defaults(func=removeInstanceFromGroup)
+
+def runUpdateInstanceLockState(subparsers):
+    parser = subparsers.add_parser('update-instance-lock-state', help='update instance lock state')
+    parser.add_argument('publicKey', help='public key')
+    parser.add_argument('privateKey', help='private key')
+    parser.add_argument('region', help='Region of the group')
+    parser.add_argument('groupId', help='group id')
+    parser.add_argument('instanceId', help='instance id')
+    parser.add_argument('state', help='lock state YES or NO')
+    parser.set_defaults(func=updateInstanceLockState)
 
 def runCreateTimerPolicy(subparsers):
     createParser = subparsers.add_parser('create-timer-policy', help='create a timer task policy')
@@ -520,6 +542,7 @@ def main():
     runDelRule(subparsers)
     runAddInstanceToGroup(subparsers)
     runRemoveInstanceFropGroup(subparsers)
+    runUpdateInstanceLockState(subparsers)
     runCreateTimerPolicy(subparsers)
     runCreateBootupConfigBandwidthPackage(subparsers)
     runModifyBootupConfigBandwidthPackage(subparsers)
