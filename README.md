@@ -315,13 +315,15 @@
 
 例如：`./autoscaling new-timer 'PublicKey' 'PrivateKey' cn-bj2 ./uas/config/timer.json`
 
-## 一键 查询 所有带宽包定时任务
+## 一键 查询 带宽包定时任务
 
 `./autoscaling get-timer-detail $PublicKey $PrivateKey $Region $ID`
 
 参数说明：
 
 * ID 循环定时任务ID
+
+说明：可使用 list-timer 先获取到所有列表，然后，根据 id 查询 某一个带宽包定时任务详细信息
 
 返回结果示例：
 

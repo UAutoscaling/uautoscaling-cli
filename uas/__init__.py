@@ -391,7 +391,7 @@ def getTimerDetail(args):
             }
     r_b = requestToAPI(args.publicKey, args.privateKey, params_b)
     r_b = json.loads(r_b)
-    print(json.dumps(r_b, indent=4))
+    #print(json.dumps(r_b, indent=4))
 
     if r_b['RetCode'] != 0 :
         return
@@ -410,7 +410,7 @@ def getTimerDetail(args):
             }
     r_p = requestToAPI(args.publicKey, args.privateKey, params_p)
     r_p = json.loads(r_p)
-    print(json.dumps(r_p, indent=4))
+    #print(json.dumps(r_p, indent=4))
 
     if r_p['RetCode'] != 0 :
         return
@@ -424,7 +424,7 @@ def getTimerDetail(args):
             }
     r = requestToAPI(args.publicKey, args.privateKey, params)
     r = json.loads(r)
-    print(json.dumps(r, indent=4))
+    #print(json.dumps(r, indent=4))
 
     result['Bandwidth'] = r['Bandwidth']
     result['TimeRange'] = r['TimeRange']
