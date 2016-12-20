@@ -1,34 +1,12 @@
-import os, sys, json
+import os, sys, json, time
 BASE = os.path.join(os.path.dirname(os.path.join(__file__)), '..', 'libs')
 sys.path.append(BASE)
 import argparse
 from api import requestToAPI
 
-def modifyInstanceGroup(args):
-    params = {
-            "Region": args.region,
-            "GroupId": args.group_id,
-            "GroupName": args.name,
-            "NotificationId": args.notification_id,
-            "ScaleMax": args.scale_max,
-            "ScaleMin": args.scale_min,
-            "BootupConfig": args.bootup_config,
-            "RemovePolicy": args.remove_policy,
-            "IsBindEIP": args.eip,
-            "Action": 'ModifyASInstanceGroup'
-            }
-    r = requestToAPI(args.publicKey, args.privateKey, params)
-    r = json.loads(r)
-    print(json.dumps(r, indent=4))
-
-def listInstanceGroup(args):
-    params = {
-            "Region": args.region,
-            "Action": 'GetASPolicyList'
-            }
-    r = requestToAPI(args.publicKey, args.privateKey, params)
-    r = json.loads(r)
-    print(json.dumps(r, indent=4))
+def formatTime(ts):
+    arr = time.localtime(ts)
+    return time.strftime("%Y-%m-%d %H:%M:%S", arr)
 
 def createRule(args):
     params = {
@@ -39,7 +17,7 @@ def createRule(args):
             "ScaleStep": args.scale_step,
             "CooldownTime": 300,
             "CheckPeriod": 1,
-            "MetricType": 101,
+            "MetricType": args.metric_type,
             "ConditionType": args.condition_type,
             "ConsecutivePeriods": args.consecutiveperiods,
             "Thresholds": args.thresholds,
@@ -60,7 +38,7 @@ def modifyRule(args):
             "ScaleStep": args.scale_step,
             "CooldownTime": 300,
             "CheckPeriod": 1,
-            "MetricType": 101,
+            "MetricType": args.metric_type,
             "ConditionType": args.condition_type,
             "ConsecutivePeriods": args.consecutiveperiods,
             "Thresholds": args.thresholds,
@@ -91,6 +69,7 @@ def delRule(args):
     r = json.loads(r)
     print(json.dumps(r, indent=4))
 
+# instance group
 def createInstanceGroup(args):
     params = {
             "Region": args.region,
@@ -101,13 +80,23 @@ def createInstanceGroup(args):
             "BootupConfig": args.bootup_config,
             "RemovePolicy": args.remove_policy,
             "DesiredAmount": args.desired_amount,
-            "IsBindEIP": args.eip,
             "Action": 'CreateASInstanceGroup'
             }
     if args.ulb:
         params['UlbId'] = args.ulb
         for v,i in zip(args.vserver, xrange(0, len(args.vserver))):
             params['VServerConfigs.%d' %i] = v
+    if args.eip:
+        params['IsBindEIP'] = args.eip
+    r = requestToAPI(args.publicKey, args.privateKey, params)
+    r = json.loads(r)
+    print(json.dumps(r, indent=4))
+
+def getInstanceGroupList(args):
+    params = {
+            "Region": args.region,
+            "Action": 'GetASInstanceGroupList'
+            }
     r = requestToAPI(args.publicKey, args.privateKey, params)
     r = json.loads(r)
     print(json.dumps(r, indent=4))
@@ -122,11 +111,65 @@ def getInstanceGroup(args):
     r = json.loads(r)
     print(json.dumps(r, indent=4))
 
+def modifyInstanceGroup(args):
+    params = {
+            "Region": args.region,
+            "GroupId": args.group_id,
+            "GroupName": args.name,
+            "NotificationId": args.notification_id,
+            "ScaleMax": args.scale_max,
+            "ScaleMin": args.scale_min,
+            "BootupConfig": args.bootup_config,
+            "RemovePolicy": args.remove_policy,
+            "IsBindEIP": args.eip,
+            "Action": 'ModifyASInstanceGroup'
+            }
+    r = requestToAPI(args.publicKey, args.privateKey, params)
+    r = json.loads(r)
+    print(json.dumps(r, indent=4))
+
+def delInstanceGroup(args):
+    params = {
+            "GroupId": args.groupId,
+            "Region": args.region,
+            "Action": 'DeleteASInstanceGroup'
+            }
+    r = requestToAPI(args.publicKey, args.privateKey, params)
+    r = json.loads(r)
+    print(json.dumps(r, indent=4))
+
+def addVServer(args):
+    params = {
+            "GroupId": args.groupId,
+            "ULBId": args.ulbId,
+            "VServerConfig": args.vserverConfig,
+            "Region": args.region,
+            "Action": 'AddASVServer'
+            }
+    r = requestToAPI(args.publicKey, args.privateKey, params)
+    r = json.loads(r)
+    print(json.dumps(r, indent=4))
+
+def deleteVServer(args):
+    params = {
+            "GroupId": args.groupId,
+            "ULBId": args.ulbId,
+            "VServerConfig": args.vserverConfig,
+            "Region": args.region,
+            "Action": 'DeleteASVServer'
+            }
+    r = requestToAPI(args.publicKey, args.privateKey, params)
+    r = json.loads(r)
+    print(json.dumps(r, indent=4))
+
+
+# instance
 def addInstanceToGroup(args):
     params = {
             "InstanceId": args.instanceId,
             "GroupId": args.groupId,
             "Region": args.region,
+            "IsLock": args.isLock,
             "Action": 'AddInstanceToGroup'
             }
     r = requestToAPI(args.publicKey, args.privateKey, params)
@@ -229,6 +272,25 @@ def createTimer(args):
     r = json.loads(r)
     print(json.dumps(r, indent=4))
 
+def getTimer(args):
+    params = {
+            "Region": args.region,
+            "TaskId": args.id,
+            "Action": 'GetASTimer'
+            }
+    r = requestToAPI(args.publicKey, args.privateKey, params)
+    r = json.loads(r)
+    print(json.dumps(r, indent=4))
+
+def listTimer(args):
+    params = {
+            "Region": args.region,
+            "Action": 'GetASTimerList'
+            }
+    r = requestToAPI(args.publicKey, args.privateKey, params)
+    r = json.loads(r)
+    print(json.dumps(r, indent=4))
+
 def modifyTimer(args):
     params = {
             "Region": args.region,
@@ -318,7 +380,59 @@ def newTimer(args):
     r = json.loads(r)
     print(json.dumps(r, indent=4))
 
+def getTimerDetail(args):
 
+    result = {}
+
+    params_b = {
+            "Region": args.region,
+            "TaskId": args.id,
+            "Action": 'GetASTimer'
+            }
+    r_b = requestToAPI(args.publicKey, args.privateKey, params_b)
+    r_b = json.loads(r_b)
+    print(json.dumps(r_b, indent=4))
+
+    if r_b['RetCode'] != 0 :
+        return
+
+    result['Name'] = r_b['Name']
+    result['Status'] = r_b['Status']
+    result['Period'] = r_b['Period']
+    result['StartTime'] = formatTime(r_b['StartTime'])
+    result['EndTime'] = formatTime(r_b['EndTime'])
+    result['NotificationId'] = r_b['NotificationId']
+
+    params_p = {
+            "Region": args.region,
+            "PolicyId": r_b['TimerActionPath'],
+            "Action": 'GetASPolicyDetail'
+            }
+    r_p = requestToAPI(args.publicKey, args.privateKey, params_p)
+    r_p = json.loads(r_p)
+    print(json.dumps(r_p, indent=4))
+
+    if r_p['RetCode'] != 0 :
+        return
+
+    result['EIPID'] = r_p['EIPID']
+
+    params = {
+            "Region": args.region,
+            "ConfigId": r_p['BootupConfig'],
+            "Action": 'GetASBootupConfigBandwidthPackage'
+            }
+    r = requestToAPI(args.publicKey, args.privateKey, params)
+    r = json.loads(r)
+    print(json.dumps(r, indent=4))
+
+    result['Bandwidth'] = r['Bandwidth']
+    result['TimeRange'] = r['TimeRange']
+
+    print(json.dumps(result, indent=4))
+
+
+### rule
 def runAddRule(subparsers):
     createParser = subparsers.add_parser('add-rule', help='moify instance group')
     createParser.add_argument('publicKey', help='public key')
@@ -328,11 +442,11 @@ def runAddRule(subparsers):
     createParser.add_argument('name', help='Name of the rule')
     createParser.add_argument('scale_step', help='scale step')
     createParser.add_argument('scale_diretion', help='scale direction, ADD or MINUS')
+    createParser.add_argument('metric_type', help='metric type, 101 : CPU CPUUtilization / 102 : NetPacketIn')
     createParser.add_argument('condition_type', help='condition type, LT or GT')
     createParser.add_argument('consecutiveperiods', help='consecutive periods means , range 1-10')
     createParser.add_argument('thresholds', help='thresholds, e.g. 90 means 90% of cpu')
     createParser.set_defaults(func=createRule)
-
 
 def runGetRuleList(subparsers):
     createParser = subparsers.add_parser('list-rule', help='moify instance group')
@@ -361,13 +475,14 @@ def runModifyRule(subparsers):
     createParser.add_argument('name', help='Name of the rule')
     createParser.add_argument('scale_step', help='scale step')
     createParser.add_argument('scale_diretion', help='scale direction, ADD or MINUS')
+    createParser.add_argument('metric_type', help='metric type, 101 : CPU / 102 : NetPacketIn')
     createParser.add_argument('condition_type', help='condition type, LT or GT')
     createParser.add_argument('consecutiveperiods', help='consecutive periods means , range 1-10')
     createParser.add_argument('thresholds', help='thresholds, e.g. 90 means 90% of cpu')
     createParser.set_defaults(func=modifyRule)
 
 
-
+### instance group
 def runModifyInstanceGroup(subparsers):
     createParser = subparsers.add_parser('modify', help='moify instance group')
     createParser.add_argument('publicKey', help='public key')
@@ -399,7 +514,7 @@ def runCreateInstanceGroup(subparsers):
     createParser.add_argument('--vserver', nargs='+', help='config of vserver, e.g. vserver-quklv4:9000')
     createParser.add_argument('--eip', help='is bind eip YES or NO')
     createParser.set_defaults(func=createInstanceGroup)
-    
+
 def runGetInstanceGroup(subparsers):
     parser = subparsers.add_parser('get', help='get instance group')
     parser.add_argument('publicKey', help='public key')
@@ -408,13 +523,43 @@ def runGetInstanceGroup(subparsers):
     parser.add_argument('groupId', help='group id')
     parser.set_defaults(func=getInstanceGroup)
 
-def runGetPolicyList(subparsers):
+def runGetInstanceGroupList(subparsers):
     parser = subparsers.add_parser('list', help='get instance group')
     parser.add_argument('publicKey', help='public key')
     parser.add_argument('privateKey', help='private key')
     parser.add_argument('region', help='Region of the group')
-    parser.set_defaults(func=listInstanceGroup)
+    parser.set_defaults(func=getInstanceGroupList)
 
+def runDeleteInstanceGroup(subparsers):
+    parser = subparsers.add_parser('delete', help='get instance group')
+    parser.add_argument('publicKey', help='public key')
+    parser.add_argument('privateKey', help='private key')
+    parser.add_argument('region', help='Region of the group')
+    parser.add_argument('groupId', help='group id')
+    parser.set_defaults(func=delInstanceGroup)
+
+def runAddVServer(subparsers):
+    createParser = subparsers.add_parser('add-vserver', help='add a vserver to instance group')
+    createParser.add_argument('publicKey', help='public key')
+    createParser.add_argument('privateKey', help='private key')
+    createParser.add_argument('region', help='Region of the policy')
+    createParser.add_argument('groupId', help='instance group id')
+    createParser.add_argument('ulbId', help='ULB ID')
+    createParser.add_argument('vserverConfig', help='vserver config VServerId:Port')
+    createParser.set_defaults(func=addVServer)
+
+def runDeleteVServer(subparsers):
+    createParser = subparsers.add_parser('delete-vserver', help='delete a vserver to instance group')
+    createParser.add_argument('publicKey', help='public key')
+    createParser.add_argument('privateKey', help='private key')
+    createParser.add_argument('region', help='Region of the policy')
+    createParser.add_argument('groupId', help='instance group id')
+    createParser.add_argument('ulbId', help='ULB ID')
+    createParser.add_argument('vserverConfig', help='vserver config VServerId:Port')
+    createParser.set_defaults(func=deleteVServer)
+
+
+### instance
 def runAddInstanceToGroup(subparsers):
     parser = subparsers.add_parser('add-instance', help='get instance group')
     parser.add_argument('publicKey', help='public key')
@@ -422,6 +567,7 @@ def runAddInstanceToGroup(subparsers):
     parser.add_argument('region', help='Region of the group')
     parser.add_argument('groupId', help='group id')
     parser.add_argument('instanceId', help='instance id')
+    parser.add_argument('isLock', help='lock state YES or NO')
     parser.set_defaults(func=addInstanceToGroup)
 
 def runRemoveInstanceFropGroup(subparsers):
@@ -453,7 +599,7 @@ def runCreateTimerPolicy(subparsers):
     createParser.add_argument('bootup_config', help='The eip id for bandwidth package')
     createParser.add_argument('eip_id', help='The eip id for bandwidth package')
     createParser.set_defaults(func=createTimerPolicy)
-    
+
 def runModifyTimerPolicy(subparsers):
     createParser = subparsers.add_parser('modify-timer-policy', help='modify a timer task policy')
     createParser.add_argument('publicKey', help='public key')
@@ -498,6 +644,21 @@ def runCreateTimer(subparsers):
     createParser.add_argument('notification_id', help='Notification id')
     createParser.set_defaults(func=createTimer)
 
+def runGetTimer(subparsers):
+    createParser = subparsers.add_parser('get-timer', help='create a timer')
+    createParser.add_argument('publicKey', help='public key')
+    createParser.add_argument('privateKey', help='private key')
+    createParser.add_argument('region', help='Region of the policy')
+    createParser.add_argument('id', help='id for timer')
+    createParser.set_defaults(func=getTimer)
+
+def runListTimer(subparsers):
+    createParser = subparsers.add_parser('list-timer', help='create a timer')
+    createParser.add_argument('publicKey', help='public key')
+    createParser.add_argument('privateKey', help='private key')
+    createParser.add_argument('region', help='Region of the policy')
+    createParser.set_defaults(func=listTimer)
+
 def runModifyTimer(subparsers):
     createParser = subparsers.add_parser('modify-timer', help='create a timer')
     createParser.add_argument('publicKey', help='public key')
@@ -529,13 +690,22 @@ def runNewTimer(subparsers):
     createParser.add_argument('config', help='config dir for timer')
     createParser.set_defaults(func=newTimer)
 
+def runGetTimerDetail(subparsers):
+    createParser = subparsers.add_parser('get-timer-detail', help='create a timer with config')
+    createParser.add_argument('publicKey', help='public key')
+    createParser.add_argument('privateKey', help='private key')
+    createParser.add_argument('region', help='Region of the policy')
+    createParser.add_argument('id', help='id for timer')
+    createParser.set_defaults(func=getTimerDetail)
+
 def main():
     parser = argparse.ArgumentParser(description="client for managing the CodePush Server")
     subparsers = parser.add_subparsers(help='subcommand')
     runCreateInstanceGroup(subparsers)
     runGetInstanceGroup(subparsers)
-    runGetPolicyList(subparsers)
+    runGetInstanceGroupList(subparsers)
     runModifyInstanceGroup(subparsers)
+    runDeleteInstanceGroup(subparsers)
     runAddRule(subparsers)
     runModifyRule(subparsers)
     runGetRuleList(subparsers)
@@ -543,14 +713,19 @@ def main():
     runAddInstanceToGroup(subparsers)
     runRemoveInstanceFropGroup(subparsers)
     runUpdateInstanceLockState(subparsers)
+    runAddVServer(subparsers)
+    runDeleteVServer(subparsers)
     runCreateTimerPolicy(subparsers)
     runCreateBootupConfigBandwidthPackage(subparsers)
     runModifyBootupConfigBandwidthPackage(subparsers)
     runModifyTimerPolicy(subparsers)
     runCreateTimer(subparsers)
+    runGetTimer(subparsers)
+    runListTimer(subparsers)
     runModifyTimer(subparsers)
     runUpdateTimerStatus(subparsers)
     runNewTimer(subparsers)
+    runGetTimerDetail(subparsers)
     args = parser.parse_args()
     args.func(args)
 
