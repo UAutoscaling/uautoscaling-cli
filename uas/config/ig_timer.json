@@ -1,0 +1,10 @@
+{
+  "Name": "instance-group-timer-test",
+  "Period": 1,
+  "StartTime": 1489054440,
+  "EndTime": 1489056600,
+  "GroupId": "uap-ydzktf",
+  "ScaleMax": 3,
+  "ScaleMin": 1,
+  "NotificationId": 111009
+}

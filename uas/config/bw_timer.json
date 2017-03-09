@@ -1,0 +1,10 @@
+{
+  "Name": "sxy-timer-test",
+  "Period": 1,
+  "StartTime": 1489054440,
+  "EndTime": 1489056600,
+  "NotificationId": 111009,
+  "Bandwidth": 2,
+  "TimeRange": 1,
+  "EIPID": "eip-oixaed"
+}
